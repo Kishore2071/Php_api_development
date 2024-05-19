@@ -1,6 +1,7 @@
 <?php
 
 require_once($_SERVER['DOCUMENT_ROOT'].'/api/lib/Database.class.php');
+require_once($_SERVER['DOCUMENT_ROOT'].'/api/lib/Folder.class.php');
 require $_SERVER['DOCUMENT_ROOT'].'/vendor/autoload.php';
 //TODO Homework: find why ../vendor? it is the same reason why we use ../../env.json in config.
 
@@ -26,10 +27,12 @@ class Signup {
         //Homework - make a proper flow to throw username already exists
         $query = "INSERT INTO `apis`.`auth` (`username`, `password`, `email`, `active`, `token`) VALUES ('$username', '$password', '$email', 0, '$token');";
         if(!mysqli_query($this->db, $query)){
-            throw new Exception("Unable to signup.");
+            throw new Exception("Unable to signup, user account might already exist.");
         } else {
             $this->id = mysqli_insert_id($this->db);
             $this->sendVerificationMail();
+            $f = new Folder();
+            $f->createNew('Default Folder');
         }
     }
     
